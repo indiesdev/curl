@@ -14,7 +14,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: 'Call API'
-              uses: agoda-com/curl@v1
+              uses: indiesdev/curl@v1
               with:
                 # The target URL
                 # Required: true if custom-config is not set
@@ -103,7 +103,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: 'Call API'
-              uses: agoda-com/curl@v1
+              uses: indiesdev/curl@v1
               id: api
               with:
                 url: https://reqres.in/api/users
