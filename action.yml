@@ -1,4 +1,4 @@
-name: 'cURL axios'
+name: 'cURL AxiosJS'
 description: 'cURL action to perform REST API based on Axios'
 inputs:
   url: 
