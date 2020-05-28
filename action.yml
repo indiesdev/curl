@@ -1,0 +1,43 @@
+name: 'cURL Axios'
+description: 'cURL action to perform REST API based on Axios'
+inputs:
+  url: 
+    description: 'The target url'
+  method:
+    description: 'The request method, basically one of GET, POST, PUT, PATCH'
+    default: 'GET'
+  accept:
+    description: 'List of status codes to be accepted, else it is considerred to be failed'
+    default: 200,201,204
+  headers:
+    description: 'Headers object'
+  params:
+    description: 'Params object'
+  body:
+    description: 'Body object'
+  timeout:
+    description: 'timeout (millisec)'
+    default: 1000
+  basic-auth:
+    description: 'Basic authentication, format =>  username:password'
+  bearer-token: 
+    description: 'Bearer Token'
+  proxy-url:
+    description: 'Proxy host, format =>  host:port'
+  proxy-auth: 
+    description: 'Proxy authentication, format =>  username:password'
+  is_debug: 
+    description: 'show debug message of response'
+    default: false
+  custom-config:
+    description: custom config
+
+outputs:
+  response:
+    description: 'The response object'
+branding:
+  icon: 'download'  
+  color: 'gray-dark'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

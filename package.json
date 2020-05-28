@@ -1,0 +1,30 @@
+{
+  "name": "curl",
+  "version": "1.0.0",
+  "description": "github action for CURL",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agoda-com/curl.git"
+  },
+  "keywords": [
+    "github-action-curl"
+  ],
+  "author": "agoda",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agoda-com/curl/issues"
+  },
+  "homepage": "https://github.com/agoda-com/curl#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.3",
+    "axios": "^0.19.2",
+    "fs": "0.0.1-security"
+  },
+  "devDependencies": {
+    "@types/node": "^13.11.1"
+  }
+}
