@@ -10,7 +10,6 @@ function sleep(ms: number) {
 }
 
 process.on('uncaughtException', function (err) {
-    sleep(5000)
     core.debug("Hahahaha")
     core.setFailed("eiei")
   });

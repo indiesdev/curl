@@ -18,7 +18,6 @@ function sleep(ms) {
     return new Promise(function (resolve) { return setTimeout(resolve, ms); });
 }
 process.on('uncaughtException', function (err) {
-    sleep(5000);
     core.debug("Hahahaha");
     core.setFailed("eiei");
 });
