@@ -33,6 +33,7 @@ export const sendRequestWithRetry = (config: AxiosRequestConfig): void => {
         } else {
             core.setFailed(err.message)
         }
+        process.exit(0)
     })
     do {
         axios(config)
