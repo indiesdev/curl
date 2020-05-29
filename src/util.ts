@@ -25,16 +25,6 @@ export const sendRequestWithRetry = (config: AxiosRequestConfig): void => {
     const retryArr: string[] = core.getInput('retry').split('/')
     const numberOfRetry: number = Number(retryArr[0])
     const backoff: number = Number(retryArr[1])
-    process.on('uncaughtException', function (err) {
-        countRetry += 1
-        core.info(`retry: ${countRetry}`)
-        if (countRetry <= numberOfRetry) {
-            sleep(backoff)
-        } else {
-            core.setFailed(err.message)
-        }
-        process.exit(0)
-    })
     do {
         axios(config)
             .then(res => {

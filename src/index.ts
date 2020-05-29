@@ -5,7 +5,15 @@ import * as core from '@actions/core'
 import * as fs from 'fs'
 import { sendRequestWithRetry } from './util'
 
+function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 try {
+    process.on('uncaughtException', function (err) {
+        sleep(10000)
+        console.error(err.message)
+    })
     if(core.getInput('custom-config')){
         const configPath = core.getInput('custom-config');
         const basePath = process.env.GITHUB_WORKSPACE;
