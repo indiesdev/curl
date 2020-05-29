@@ -10,10 +10,6 @@ function sleep(ms: number) {
 }
 
 try {
-    process.on('uncaughtException', function (err) {
-        sleep(10000)
-        console.error(err.message)
-    })
     if(core.getInput('custom-config')){
         const configPath = core.getInput('custom-config');
         const basePath = process.env.GITHUB_WORKSPACE;

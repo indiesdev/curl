@@ -10,11 +10,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var axios_1 = __importDefault(require("axios"));
 var requestconf_1 = __importDefault(require("./requestconf"));
 var core = __importStar(require("@actions/core"));
-var output_1 = __importDefault(require("./output"));
 var fs = __importStar(require("fs"));
+var util_1 = require("./util");
+function sleep(ms) {
+    return new Promise(function (resolve) { return setTimeout(resolve, ms); });
+}
 try {
     if (core.getInput('custom-config')) {
         var configPath = core.getInput('custom-config');
@@ -28,10 +30,10 @@ try {
             throw new Error('Config file not found, meybe you need to use action/checkout before this step or there is typo on file name');
         }
         var customConfig = JSON.parse(fs.readFileSync(path).toString());
-        axios_1.default(customConfig).then(function (res) { return output_1.default(res); }).catch(function (err) { return core.setFailed(err.message); });
+        util_1.sendRequestWithRetry(customConfig);
     }
     else {
-        axios_1.default(requestconf_1.default).then(function (res) { return output_1.default(res); }).catch(function (err) { return core.setFailed(err.message); });
+        util_1.sendRequestWithRetry(requestconf_1.default);
     }
 }
 catch (err) {

@@ -6,8 +6,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var core = __importStar(require("@actions/core"));
+var axios_1 = __importDefault(require("axios"));
+var output_1 = __importDefault(require("./output"));
 exports.validateStatusCode = function (actualStatusCode) {
     var acceptedStatusCode = core.getInput('accept')
         .split(",").filter(function (x) { return x !== ""; })
@@ -23,4 +28,38 @@ exports.buildOutput = function (res) {
         "headers": res.headers
     });
 };
+exports.sendRequestWithRetry = function (config) {
+    var exit = false;
+    var countRetry = 0;
+    var retryArr = core.getInput('retry').split('/');
+    var numberOfRetry = Number(retryArr[0]);
+    var backoff = Number(retryArr[1]);
+    core.info("retry: " + countRetry);
+    do {
+        try {
+            axios_1.default(config)
+                .then(function (res) {
+                exit = true;
+                output_1.default(res);
+            })
+                .catch(function (err) {
+                throw new Error(err);
+            });
+        }
+        catch (err) {
+            countRetry += 1;
+            core.info("retry: " + countRetry);
+            if (countRetry <= numberOfRetry) {
+                sleep(backoff);
+            }
+            else {
+                exit = true;
+                core.setFailed(err);
+            }
+        }
+    } while (!exit);
+};
+function sleep(ms) {
+    return new Promise(function (resolve) { return setTimeout(resolve, ms); });
+}
 //# sourceMappingURL=util.js.map
