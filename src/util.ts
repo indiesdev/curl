@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
-import { AxiosResponse } from 'axios'
+import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
+import setOutput from './output'
 
 export const validateStatusCode = (actualStatusCode: string): void => {
     const acceptedStatusCode: string[] = core.getInput('accept')
@@ -18,4 +19,32 @@ export const buildOutput = (res: AxiosResponse <any>): string => {
     })
 }
 
+export const sendRequestWithRetry = (config: AxiosRequestConfig): void => {
+    var exit = false
+    var countRetry = 0
+    const retryArr: string[] = core.getInput('retry').split('/')
+    const numberOfRetry: number = Number(retryArr[0])
+    const backoff: number = Number(retryArr[1])
+    do{
+        axios(config)
+            .then(res => {
+                exit = true
+                setOutput(res)
+            })
+            .catch(err =>  {
+                countRetry += 1
+                core.info(`retry: ${countRetry}`)
+                if(countRetry <= numberOfRetry){
+                    sleep(backoff)
+                }else{
+                    exit = true
+                    core.setFailed(err)
+                }
+            })
+    }while(!exit)
+}
+
+function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 

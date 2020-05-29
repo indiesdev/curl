@@ -29,6 +29,8 @@ inputs:
   is_debug: 
     description: 'show debug message of response'
     default: false
+  retry:
+    default: 1/1
   custom-config:
     description: custom config
 
