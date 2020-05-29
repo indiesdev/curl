@@ -14,13 +14,6 @@ var requestconf_1 = __importDefault(require("./requestconf"));
 var core = __importStar(require("@actions/core"));
 var fs = __importStar(require("fs"));
 var util_1 = require("./util");
-function sleep(ms) {
-    return new Promise(function (resolve) { return setTimeout(resolve, ms); });
-}
-process.on('uncaughtException', function (err) {
-    core.debug("Hahahaha");
-    core.setFailed("eiei");
-});
 try {
     if (core.getInput('custom-config')) {
         var configPath = core.getInput('custom-config');

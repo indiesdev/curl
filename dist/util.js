@@ -70,7 +70,6 @@ exports.sendRequestWithRetry = function (config) {
     var retryArr = core.getInput('retry').split('/');
     var numberOfRetry = Number(retryArr[0]);
     var backoff = Number(retryArr[1]);
-    core.info("retry: " + countRetry);
     do {
         axios_1.default(config)
             .then(function (res) {

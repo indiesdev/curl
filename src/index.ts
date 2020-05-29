@@ -5,14 +5,6 @@ import * as core from '@actions/core'
 import * as fs from 'fs'
 import { sendRequestWithRetry } from './util'
 
-function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-process.on('uncaughtException', function (err) {
-    core.debug("Hahahaha")
-    core.setFailed("eiei")
-  });
 
 try {
     if(core.getInput('custom-config')){
