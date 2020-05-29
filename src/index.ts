@@ -9,6 +9,12 @@ function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+process.on('uncaughtException', function (err) {
+    sleep(5000)
+    core.debug("Hahahaha")
+    core.setFailed("eiei")
+  });
+
 try {
     if(core.getInput('custom-config')){
         const configPath = core.getInput('custom-config');

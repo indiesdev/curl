@@ -17,6 +17,11 @@ var util_1 = require("./util");
 function sleep(ms) {
     return new Promise(function (resolve) { return setTimeout(resolve, ms); });
 }
+process.on('uncaughtException', function (err) {
+    sleep(5000);
+    core.debug("Hahahaha");
+    core.setFailed("eiei");
+});
 try {
     if (core.getInput('custom-config')) {
         var configPath = core.getInput('custom-config');
