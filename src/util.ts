@@ -19,7 +19,7 @@ export const buildOutput = (res: AxiosResponse<any>): string => {
     })
 }
 
-export const sendRequestWithRetry = async (config: AxiosRequestConfig) => {
+export const sendRequestWithRetry = (config: AxiosRequestConfig) => {
     var exit = false
     var countRetry = 0
     const retryArr: string[] = core.getInput('retry').split('/')
@@ -27,25 +27,21 @@ export const sendRequestWithRetry = async (config: AxiosRequestConfig) => {
     const backoff: number = Number(retryArr[1])
     core.info(`retry: ${countRetry}`)
     do {
-        try{
             axios(config)
             .then(res => {
                 exit = true
                 setOutput(res)
             })
-            .catch(err => {
-                throw new Error(err)
+            .catch(async err => {
+                countRetry += 1
+                core.info(`retry: ${countRetry}`)
+                if (countRetry <= numberOfRetry) {
+                    await sleep(backoff * 1000)
+                } else {
+                    exit = true
+                    core.setFailed(err)
+                }
             })
-        }catch(err){
-            countRetry += 1
-            core.info(`retry: ${countRetry}`)
-            if (countRetry <= numberOfRetry) {
-                await sleep(backoff * 1000)
-            } else {
-                exit = true
-                core.setFailed(err)
-            }
-        }
     } while (!exit)
 }
 

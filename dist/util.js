@@ -64,50 +64,40 @@ exports.buildOutput = function (res) {
         "headers": res.headers
     });
 };
-exports.sendRequestWithRetry = function (config) { return __awaiter(void 0, void 0, void 0, function () {
-    var exit, countRetry, retryArr, numberOfRetry, backoff, err_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                exit = false;
-                countRetry = 0;
-                retryArr = core.getInput('retry').split('/');
-                numberOfRetry = Number(retryArr[0]);
-                backoff = Number(retryArr[1]);
-                core.info("retry: " + countRetry);
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 2, , 6]);
-                axios_1.default(config)
-                    .then(function (res) {
-                    exit = true;
-                    output_1.default(res);
-                })
-                    .catch(function (err) {
-                    throw new Error(err);
-                });
-                return [3 /*break*/, 6];
-            case 2:
-                err_1 = _a.sent();
-                countRetry += 1;
-                core.info("retry: " + countRetry);
-                if (!(countRetry <= numberOfRetry)) return [3 /*break*/, 4];
-                return [4 /*yield*/, sleep(backoff * 1000)];
-            case 3:
-                _a.sent();
-                return [3 /*break*/, 5];
-            case 4:
-                exit = true;
-                core.setFailed(err_1);
-                _a.label = 5;
-            case 5: return [3 /*break*/, 6];
-            case 6:
-                if (!exit) return [3 /*break*/, 1];
-                _a.label = 7;
-            case 7: return [2 /*return*/];
-        }
-    });
-}); };
+exports.sendRequestWithRetry = function (config) {
+    var exit = false;
+    var countRetry = 0;
+    var retryArr = core.getInput('retry').split('/');
+    var numberOfRetry = Number(retryArr[0]);
+    var backoff = Number(retryArr[1]);
+    core.info("retry: " + countRetry);
+    do {
+        axios_1.default(config)
+            .then(function (res) {
+            exit = true;
+            output_1.default(res);
+        })
+            .catch(function (err) { return __awaiter(void 0, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        countRetry += 1;
+                        core.info("retry: " + countRetry);
+                        if (!(countRetry <= numberOfRetry)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, sleep(backoff * 1000)];
+                    case 1:
+                        _a.sent();
+                        return [3 /*break*/, 3];
+                    case 2:
+                        exit = true;
+                        core.setFailed(err);
+                        _a.label = 3;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); });
+    } while (!exit);
+};
 function sleep(ms) {
     return new Promise(function (resolve) { return setTimeout(resolve, ms); });
 }
