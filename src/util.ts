@@ -32,9 +32,9 @@ export const sendRequestWithRetry = async (config: AxiosRequestConfig) => {
             exit = true
         } catch (err) {
             countRetry += 1
-            core.info(`retry: ${countRetry}`)
             if (countRetry <= numberOfRetry) {
-                //await sleep(backoff * 1000)
+                core.info(`retry: ${countRetry}`)
+                await sleep(backoff * 1000)
             } else {
                 exit = true
                 core.setFailed(err)

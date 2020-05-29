@@ -76,29 +76,31 @@ exports.sendRequestWithRetry = function (config) { return __awaiter(void 0, void
                 backoff = Number(retryArr[1]);
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 3, , 4]);
+                _a.trys.push([1, 3, , 7]);
                 return [4 /*yield*/, axios_1.default(config)];
             case 2:
                 res = _a.sent();
                 output_1.default(res);
                 exit = true;
-                return [3 /*break*/, 4];
+                return [3 /*break*/, 7];
             case 3:
                 err_1 = _a.sent();
                 countRetry += 1;
+                if (!(countRetry <= numberOfRetry)) return [3 /*break*/, 5];
                 core.info("retry: " + countRetry);
-                if (countRetry <= numberOfRetry) {
-                    //await sleep(backoff * 1000)
-                }
-                else {
-                    exit = true;
-                    core.setFailed(err_1);
-                }
-                return [3 /*break*/, 4];
+                return [4 /*yield*/, sleep(backoff * 1000)];
             case 4:
+                _a.sent();
+                return [3 /*break*/, 6];
+            case 5:
+                exit = true;
+                core.setFailed(err_1);
+                _a.label = 6;
+            case 6: return [3 /*break*/, 7];
+            case 7:
                 if (!exit) return [3 /*break*/, 1];
-                _a.label = 5;
-            case 5: return [2 /*return*/];
+                _a.label = 8;
+            case 8: return [2 /*return*/];
         }
     });
 }); };
