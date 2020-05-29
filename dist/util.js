@@ -78,21 +78,16 @@ exports.sendRequestWithRetry = function (config) {
         })
             .catch(function (err) { return __awaiter(void 0, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        countRetry += 1;
-                        core.info("retry: " + countRetry);
-                        if (!(countRetry <= numberOfRetry)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, sleep(backoff * 1000)];
-                    case 1:
-                        _a.sent();
-                        return [3 /*break*/, 3];
-                    case 2:
-                        exit = true;
-                        core.setFailed(err);
-                        _a.label = 3;
-                    case 3: return [2 /*return*/];
+                countRetry += 1;
+                core.info("retry: " + countRetry);
+                if (countRetry <= numberOfRetry) {
+                    //await sleep(backoff * 1000)
                 }
+                else {
+                    exit = true;
+                    core.setFailed(err);
+                }
+                return [2 /*return*/];
             });
         }); });
     } while (!exit);
