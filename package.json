@@ -21,7 +21,7 @@
   "homepage": "https://github.com/agoda-com/curl#readme",
   "dependencies": {
     "@actions/core": "^1.2.3",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "fs": "0.0.1-security"
   },
   "devDependencies": {
