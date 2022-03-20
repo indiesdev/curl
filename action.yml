@@ -18,19 +18,20 @@ inputs:
   timeout:
     description: 'timeout (millisec)'
     default: 1000
-  basic-auth:
-    description: 'Basic authentication, format =>  username:password'
+  basic-auth-token:
+    description: 'Basic authentication token, format =>  username:password as base64'
   bearer-token: 
     description: 'Bearer Token'
   proxy-url:
     description: 'Proxy host, format =>  host:port'
-  proxy-auth: 
-    description: 'Proxy authentication, format =>  username:password'
-  is_debug: 
-    description: 'show debug message of response'
-    default: false
-  retry:
-    default: 1/1
+  proxy-auth-token: 
+    description: 'Proxy authentication token, format =>  username:password as base64'
+  log-response: 
+    description: 'Should log the response'
+    default: 'false'
+  retries:
+    description: 'retries number'
+    default: 1
   custom-config:
     description: custom config
 

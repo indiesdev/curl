@@ -20,9 +20,13 @@
   },
   "homepage": "https://github.com/agoda-com/curl#readme",
   "dependencies": {
-    "@actions/core": "^1.2.3",
-    "axios": "^0.19.2",
-    "fs": "0.0.1-security"
+    "@actions/core": "^1.6.0",
+    "@types/js-yaml": "^4.0.5",
+    "axios": "^0.26.1",
+    "axios-retry": "^3.2.4",
+    "fs": "0.0.1-security",
+    "js-yaml": "^4.1.0",
+    "retry-axios": "^2.6.0"
   },
   "devDependencies": {
     "@types/node": "^13.11.1"
