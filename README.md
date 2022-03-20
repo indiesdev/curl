@@ -122,6 +122,8 @@ jobs:
           url: https://reqres.in/api/users
           method: "POST"
           accept: 201
+          # you can use multiline format to constrct json data object, the content should be yml format.
+          # this format apply to inputs: body, headers and params
           body: |
             name: breeze
             job: devops
