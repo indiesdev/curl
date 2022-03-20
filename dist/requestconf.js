@@ -10,89 +10,132 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.INPUT_RETRIES = exports.INPUT_CUSTOM_CONFIG_FILE = exports.INPUT_LOG_RESPONSE = exports.INPUT_ACCEPT = exports.INPUT_TIMEOUT = exports.INPUT_METHOD = exports.INPUT_BODY = exports.INPUT_PARAMS = exports.INPUT_HEADERS = exports.INPUT_URL = exports.INPUT_PROXY_AUTH_TOKEN = exports.INPUT_PROXY_URL = exports.INPUT_BEARER_TOKEN = exports.INPUT_BASIC_AUTH_TOKEN = void 0;
+var util_1 = require("./util");
 var core = __importStar(require("@actions/core"));
 // builder for request config
+// inputs
+exports.INPUT_BASIC_AUTH_TOKEN = core.getInput("basic-auth-token");
+exports.INPUT_BEARER_TOKEN = core.getInput("bearer-token");
+exports.INPUT_PROXY_URL = core.getInput("proxy-url");
+exports.INPUT_PROXY_AUTH_TOKEN = core.getInput("proxy-auth-token");
+exports.INPUT_URL = core.getInput("url", {
+    required: true,
+});
+exports.INPUT_HEADERS = core.getInput("headers");
+exports.INPUT_PARAMS = core.getInput("params");
+exports.INPUT_BODY = core.getInput("body");
+exports.INPUT_METHOD = core.getInput("method");
+exports.INPUT_TIMEOUT = core.getInput("timeout");
+exports.INPUT_ACCEPT = core.getInput("accept");
+exports.INPUT_LOG_RESPONSE = core.getBooleanInput("log-response");
+exports.INPUT_CUSTOM_CONFIG_FILE = core.getInput("custom-config");
+exports.INPUT_RETRIES = core.getInput("retries");
 var builder = {
     basicAuth: function () {
-        var authArr = core.getInput('basic-auth').trim().split(':');
-        if (authArr.length !== 2) {
-            throw new Error('basic-auth format is invalid. The valid format should be username:password.');
+        var basicAuthString = Buffer.from(exports.INPUT_BASIC_AUTH_TOKEN, "base64").toString();
+        var basicAuthArr = basicAuthString.trim().split(":");
+        if (basicAuthArr.length !== 2) {
+            throw new Error("basic-auth-token format is invalid. The valid format should be username:password as base64.");
         }
         return {
-            username: authArr[0],
-            password: authArr[1]
+            username: basicAuthArr[0],
+            password: basicAuthArr[1],
         };
     },
     bearerToken: function () {
-        return "Bearer " + core.getInput('bearer-token');
+        return "Bearer ".concat(exports.INPUT_BEARER_TOKEN);
     },
     proxy: function () {
         var proxy;
-        if (core.getInput('proxy-url').includes('//')) {
-            var proxyUrlArr = core.getInput('proxy-url').replace('//', '').trim().split(':');
+        if (exports.INPUT_PROXY_URL.includes("//")) {
+            var proxyUrlArr = exports.INPUT_PROXY_URL.replace("//", "")
+                .trim()
+                .split(":");
             if (proxyUrlArr.length !== 3) {
-                throw new Error('proxy-url format is invalid. The valid format should be host:port.');
+                throw new Error("proxy-url format is invalid. The valid format should be host:port.");
             }
             proxy = {
                 protocol: proxyUrlArr[0],
                 host: proxyUrlArr[1],
-                port: Number(proxyUrlArr[2])
+                port: Number(proxyUrlArr[2]),
             };
         }
         else {
-            var proxyUrlArr = core.getInput('proxy-url').trim().split(':');
+            var proxyUrlArr = exports.INPUT_PROXY_URL.trim().split(":");
             if (proxyUrlArr.length !== 2) {
-                throw new Error('proxy-url format is invalid. The valid format should be host:port.');
+                throw new Error("proxy-url format is invalid. The valid format should be host:port.");
             }
             proxy = {
                 host: proxyUrlArr[0],
-                port: Number(proxyUrlArr[1])
+                port: Number(proxyUrlArr[1]),
             };
         }
-        if (core.getInput('proxy-auth')) {
-            var proxyAuthArr = core.getInput('proxy-auth').trim().split(':');
+        if (exports.INPUT_PROXY_AUTH_TOKEN) {
+            var proxyAuthString = Buffer.from(exports.INPUT_PROXY_AUTH_TOKEN, "base64").toString();
+            var proxyAuthArr = proxyAuthString.trim().split(":");
             if (proxyAuthArr.length !== 2) {
-                throw new Error('proxy-auth format is invalid. The valid format should be username:password.');
+                throw new Error("proxy-auth format is invalid. The valid format should be username:password as base64.");
             }
             proxy.auth = {
                 username: proxyAuthArr[0],
-                password: proxyAuthArr[1]
+                password: proxyAuthArr[1],
             };
         }
         return proxy;
-    }
+    },
 };
-// Request config  
+// Request config
 var config = {
-    url: core.getInput('url'),
-    method: core.getInput('method'),
-    timeout: Number(core.getInput('timeout'))
+    url: exports.INPUT_URL,
+    method: exports.INPUT_METHOD,
+    timeout: Number(exports.INPUT_TIMEOUT),
 };
-if (core.getInput('basic-auth')) {
+if (exports.INPUT_BASIC_AUTH_TOKEN) {
     config.auth = builder.basicAuth();
 }
-if (core.getInput('headers')) {
-    config.headers = JSON.parse(core.getInput('headers'));
+if (exports.INPUT_HEADERS) {
+    config.headers = (0, util_1.tryToParseJson)(exports.INPUT_HEADERS);
 }
-if (core.getInput('params')) {
-    config.params = JSON.parse(core.getInput('params'));
+if (exports.INPUT_PARAMS) {
+    config.params = (0, util_1.tryToParseJson)(exports.INPUT_PARAMS);
 }
-if (core.getInput('body')) {
-    config.data = core.getInput('body');
+if (exports.INPUT_BODY) {
+    config.data = (0, util_1.tryToParseJson)(exports.INPUT_BODY);
 }
-if (core.getInput('bearer-token')) {
+if (exports.INPUT_BEARER_TOKEN) {
     config.headers = __assign(__assign({}, config.headers), { Authorization: builder.bearerToken() });
 }
-if (core.getInput('proxy-url')) {
+if (exports.INPUT_PROXY_URL) {
     config.proxy = builder.proxy();
+}
+if (exports.INPUT_ACCEPT) {
+    var accepts_1 = (0, util_1.getAcceptedStatusCodes)();
+    config.validateStatus = function (status) { return accepts_1.includes(status); };
 }
 exports.default = config;
 //# sourceMappingURL=requestconf.js.map

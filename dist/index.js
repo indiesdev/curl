@@ -1,36 +1,50 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var requestconf_1 = __importDefault(require("./requestconf"));
+var requestconf_1 = __importStar(require("./requestconf"));
 var core = __importStar(require("@actions/core"));
 var fs = __importStar(require("fs"));
 var util_1 = require("./util");
 try {
-    if (core.getInput('custom-config')) {
-        var configPath = core.getInput('custom-config');
+    if (requestconf_1.INPUT_CUSTOM_CONFIG_FILE) {
+        core.info("Using custom axios config file");
         var basePath = process.env.GITHUB_WORKSPACE;
-        var path = basePath + "/" + configPath;
-        core.info("Path is " + path);
-        if (configPath.split('.').pop() !== 'json') {
-            throw new Error('Config must be json file');
+        var path = "".concat(basePath, "/").concat(requestconf_1.INPUT_CUSTOM_CONFIG_FILE);
+        core.debug("Path is ".concat(path));
+        if (requestconf_1.INPUT_CUSTOM_CONFIG_FILE.split(".").pop() !== "json") {
+            throw new Error("Config must be json file");
         }
         if (!fs.existsSync(path)) {
-            throw new Error('Config file not found, meybe you need to use action/checkout before this step or there is typo on file name');
+            throw new Error("Config file not found, meybe you need to use action/checkout before this step or there is typo on file name");
         }
         var customConfig = JSON.parse(fs.readFileSync(path).toString());
-        util_1.sendRequestWithRetry(customConfig);
+        (0, util_1.sendRequestWithRetry)(customConfig);
     }
     else {
-        util_1.sendRequestWithRetry(requestconf_1.default);
+        core.info("Using config from action params");
+        (0, util_1.sendRequestWithRetry)(requestconf_1.default);
     }
 }
 catch (err) {

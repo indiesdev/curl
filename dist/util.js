@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,76 +58,86 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.sendRequestWithRetry = exports.tryToParseJson = exports.buildOutput = exports.getAcceptedStatusCodes = void 0;
+var requestconf_1 = require("./requestconf");
 var core = __importStar(require("@actions/core"));
 var axios_1 = __importDefault(require("axios"));
 var output_1 = __importDefault(require("./output"));
-exports.validateStatusCode = function (actualStatusCode) {
-    var acceptedStatusCode = core.getInput('accept')
-        .split(",").filter(function (x) { return x !== ""; })
+var rax = __importStar(require("retry-axios"));
+var yaml = __importStar(require("js-yaml"));
+var getAcceptedStatusCodes = function () {
+    var acceptedStatusCodes = requestconf_1.INPUT_ACCEPT
+        .split(",")
+        .filter(function (x) { return x !== ""; })
         .map(function (x) { return x.trim(); });
-    if (!acceptedStatusCode.includes(actualStatusCode)) {
-        throw new Error("The accepted status code is " + acceptedStatusCode + " but got " + actualStatusCode);
+    var output = [];
+    for (var _i = 0, acceptedStatusCodes_1 = acceptedStatusCodes; _i < acceptedStatusCodes_1.length; _i++) {
+        var acceptedStatusCode = acceptedStatusCodes_1[_i];
+        if (isNaN(Number(acceptedStatusCode))) {
+            throw new Error("Accept status ".concat(acceptedStatusCode, " is invalid"));
+        }
+        output.push(Number(acceptedStatusCode));
     }
+    return output;
 };
-exports.buildOutput = function (res) {
+exports.getAcceptedStatusCodes = getAcceptedStatusCodes;
+var buildOutput = function (res) {
     return JSON.stringify({
-        "status_code": res.status,
-        "data": res.data,
-        "headers": res.headers
+        status_code: res.status,
+        data: res.data,
+        headers: res.headers,
     });
 };
-exports.sendRequestWithRetry = function (config) { return __awaiter(void 0, void 0, void 0, function () {
-    var exit, countRetry, retryArr, numberOfRetry, backoff, res, err_1;
+exports.buildOutput = buildOutput;
+var tryToParseJson = function (data) {
+    var output = data;
+    // try to parse json directly
+    try {
+        output = JSON.parse(data);
+        return output;
+    }
+    catch (_a) {
+        // do nothing
+    }
+    // try to parse json from yaml
+    try {
+        output = yaml.load(data, { json: true });
+        return output;
+    }
+    catch (_b) {
+        // do nothing
+    }
+    return data;
+};
+exports.tryToParseJson = tryToParseJson;
+var sendRequestWithRetry = function (config) { return __awaiter(void 0, void 0, void 0, function () {
+    var client;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                exit = false;
-                countRetry = 0;
-                retryArr = core.getInput('retry').split('/');
-                numberOfRetry = Number(retryArr[0]);
-                backoff = Number(retryArr[1]);
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 7]);
-                return [4 /*yield*/, axios_1.default(config)];
-            case 2:
-                res = _a.sent();
-                output_1.default(res);
-                exit = true;
-                return [3 /*break*/, 7];
-            case 3:
-                err_1 = _a.sent();
-                countRetry += 1;
-                if (!(countRetry <= numberOfRetry)) return [3 /*break*/, 5];
-                core.info("retry: " + countRetry);
-                return [4 /*yield*/, sleep(backoff * 1000)];
-            case 4:
-                _a.sent();
-                return [3 /*break*/, 6];
-            case 5:
-                exit = true;
-                core.setFailed(err_1);
-                _a.label = 6;
-            case 6: return [3 /*break*/, 7];
-            case 7:
-                if (!exit) return [3 /*break*/, 1];
-                _a.label = 8;
-            case 8: return [2 /*return*/];
+        client = axios_1.default.create();
+        if (requestconf_1.INPUT_RETRIES) {
+            if (isNaN(Number(requestconf_1.INPUT_RETRIES))) {
+                throw new Error("retries should be number");
+            }
+            client.defaults.raxConfig = {
+                instance: client,
+                retry: Number(requestconf_1.INPUT_RETRIES),
+                onRetryAttempt: function (err) {
+                    var cfg = rax.getConfig(err);
+                    core.info("Retry attempt #".concat(cfg === null || cfg === void 0 ? void 0 : cfg.currentRetryAttempt));
+                },
+            };
+            rax.attach(client);
         }
+        client
+            .request(config)
+            .then(function (resp) { return (0, output_1.default)(resp); })
+            .catch(function (err) { return core.setFailed(err); });
+        return [2 /*return*/];
     });
 }); };
-function sleep(ms) {
-    return new Promise(function (resolve) { return setTimeout(resolve, ms); });
-}
+exports.sendRequestWithRetry = sendRequestWithRetry;
 //# sourceMappingURL=util.js.map
