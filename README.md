@@ -1,6 +1,6 @@
-# cURL for Github Action
+# cURL for GitHub Action
 
-You can use this action to perform REST API base on [axios](https://github.com/axios/axios) module.
+You can use this action to perform REST API requests, using the [axios](https://github.com/axios/axios) module.
 
 # Usage
 
@@ -10,7 +10,7 @@ name: Example of cURL action
 on: [push]
 jobs:
   test-curl-action:
-    name: "Perform REST API"
+    name: "Perform REST API request"
     runs-on: ubuntu-latest
     steps:
       - name: "Call API"
@@ -25,15 +25,15 @@ jobs:
           method: "POST"
 
           # List of response status codes to be accepted, else it will set the job to be failed
-          # If more than one value is needed, you can use comma(,) as seperator
+          # If more than one value is needed, you can use comma (,) as separator
           # In this case if the response status code is not one of 200, 201 and 204, the job will be failed
           # Default is 200,201,204
           accept: 200,201,204
 
-          # Headers can be passed through json object string
+          # Headers can be passed through with a json object string
           headers: '{ "custom-header": "value" }'
 
-          # Params can be passed through json object string
+          # Params can be passed through with a json object string
           params: '{ "param1": "value", "param2": "value2" }'
 
           # Body request
@@ -57,22 +57,22 @@ jobs:
           # Format => host:port
           proxy-url: https://proxy-url:3000
 
-          # If the proxy host requires the authentication, you can use proxy-auth to pass credentials
+          # If the proxy host requires authentication, you can use proxy-auth to pass credentials
           # Format => username:password as base64
           proxy-auth-token: ${{ secrets.proxy_auth_token }}
 
-          # If it is set to true, it will show the response log in the Github UI
+          # If it is set to true, it will show the response log in the GitHub UI
           # Default: false
           log-response: false
 
-          # Retries specify the number of retry attemps before giving up.
+          # The number of attempts before giving up
           # Default: 1
           retries: 3
 
-          # If you want to use axios config directly, you can pass config file to the action
+          # If you want to use axios config directly, you can pass a config file to the action
           # The file is just basically a json file that has the same format as axios config https://github.com/axios/axios#request-config
-          # If this input is set, it will ignore other inputs that related to the config
-          # The path file is start from root directory of the repo
+          # If this input is set, it will ignore other inputs related to the config
+          # The path file is relative to the root directory of the repo
           custom-config: .github/workflows/curl-config.json
 ```
 
@@ -122,7 +122,7 @@ jobs:
           url: https://reqres.in/api/users
           method: "POST"
           accept: 201
-          # you can use multiline format to constrct json data object, the content should be yml format.
+          # you can use multiline format to construct json data object, the content should be yml format.
           # this format apply to inputs: body, headers and params
           body: |
             name: breeze
