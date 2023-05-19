@@ -12,11 +12,7 @@ var __assign = (this && this.__assign) || function () {
 };
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -29,7 +25,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -68,7 +64,7 @@ var builder = {
         };
     },
     bearerToken: function () {
-        return "Bearer ".concat(exports.INPUT_BEARER_TOKEN);
+        return "Bearer " + exports.INPUT_BEARER_TOKEN;
     },
     proxy: function () {
         var proxy;
@@ -119,13 +115,13 @@ if (exports.INPUT_BASIC_AUTH_TOKEN) {
     config.auth = builder.basicAuth();
 }
 if (exports.INPUT_HEADERS) {
-    config.headers = (0, util_1.tryToParseJson)(exports.INPUT_HEADERS);
+    config.headers = util_1.tryToParseJson(exports.INPUT_HEADERS);
 }
 if (exports.INPUT_PARAMS) {
-    config.params = (0, util_1.tryToParseJson)(exports.INPUT_PARAMS);
+    config.params = util_1.tryToParseJson(exports.INPUT_PARAMS);
 }
 if (exports.INPUT_BODY) {
-    config.data = (0, util_1.tryToParseJson)(exports.INPUT_BODY);
+    config.data = util_1.tryToParseJson(exports.INPUT_BODY);
 }
 if (exports.INPUT_BEARER_TOKEN) {
     config.headers = __assign(__assign({}, config.headers), { Authorization: builder.bearerToken() });
@@ -134,7 +130,7 @@ if (exports.INPUT_PROXY_URL) {
     config.proxy = builder.proxy();
 }
 if (exports.INPUT_ACCEPT) {
-    var accepts_1 = (0, util_1.getAcceptedStatusCodes)();
+    var accepts_1 = util_1.getAcceptedStatusCodes();
     config.validateStatus = function (status) { return accepts_1.includes(status); };
 }
 exports.default = config;

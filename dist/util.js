@@ -1,11 +1,7 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -18,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -69,7 +65,7 @@ var axios_1 = __importDefault(require("axios"));
 var output_1 = __importDefault(require("./output"));
 var rax = __importStar(require("retry-axios"));
 var yaml = __importStar(require("js-yaml"));
-var getAcceptedStatusCodes = function () {
+exports.getAcceptedStatusCodes = function () {
     var acceptedStatusCodes = requestconf_1.INPUT_ACCEPT
         .split(",")
         .filter(function (x) { return x !== ""; })
@@ -78,22 +74,20 @@ var getAcceptedStatusCodes = function () {
     for (var _i = 0, acceptedStatusCodes_1 = acceptedStatusCodes; _i < acceptedStatusCodes_1.length; _i++) {
         var acceptedStatusCode = acceptedStatusCodes_1[_i];
         if (isNaN(Number(acceptedStatusCode))) {
-            throw new Error("Accept status ".concat(acceptedStatusCode, " is invalid"));
+            throw new Error("Accept status " + acceptedStatusCode + " is invalid");
         }
         output.push(Number(acceptedStatusCode));
     }
     return output;
 };
-exports.getAcceptedStatusCodes = getAcceptedStatusCodes;
-var buildOutput = function (res) {
+exports.buildOutput = function (res) {
     return JSON.stringify({
         status_code: res.status,
         data: res.data,
         headers: res.headers,
     });
 };
-exports.buildOutput = buildOutput;
-var tryToParseJson = function (data) {
+exports.tryToParseJson = function (data) {
     var output = data;
     // try to parse json directly
     try {
@@ -113,8 +107,7 @@ var tryToParseJson = function (data) {
     }
     return data;
 };
-exports.tryToParseJson = tryToParseJson;
-var sendRequestWithRetry = function (config) { return __awaiter(void 0, void 0, void 0, function () {
+exports.sendRequestWithRetry = function (config) { return __awaiter(void 0, void 0, void 0, function () {
     var client;
     return __generator(this, function (_a) {
         client = axios_1.default.create();
@@ -127,17 +120,16 @@ var sendRequestWithRetry = function (config) { return __awaiter(void 0, void 0, 
                 retry: Number(requestconf_1.INPUT_RETRIES),
                 onRetryAttempt: function (err) {
                     var cfg = rax.getConfig(err);
-                    core.info("Retry attempt #".concat(cfg === null || cfg === void 0 ? void 0 : cfg.currentRetryAttempt));
+                    core.info("Retry attempt #" + (cfg === null || cfg === void 0 ? void 0 : cfg.currentRetryAttempt));
                 },
             };
             rax.attach(client);
         }
         client
             .request(config)
-            .then(function (resp) { return (0, output_1.default)(resp); })
+            .then(function (resp) { return output_1.default(resp); })
             .catch(function (err) { return core.setFailed(err); });
         return [2 /*return*/];
     });
 }); };
-exports.sendRequestWithRetry = sendRequestWithRetry;
 //# sourceMappingURL=util.js.map
