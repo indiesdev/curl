@@ -4,6 +4,8 @@
   "description": "github action for CURL",
   "main": "dist/index.js",
   "scripts": {
+    "build": "tsc --build",
+    "clean": "tsc --build --clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,7 +22,7 @@
   },
   "homepage": "https://github.com/agoda-com/curl#readme",
   "dependencies": {
-    "@actions/core": "^1.6.0",
+    "@actions/core": "^1.10.0",
     "@types/js-yaml": "^4.0.5",
     "axios": "^0.26.1",
     "axios-retry": "^3.2.4",
@@ -29,6 +31,7 @@
     "retry-axios": "^2.6.0"
   },
   "devDependencies": {
-    "@types/node": "^13.11.1"
+    "@types/node": "^16.11.7",
+    "typescript": "^3.7.7"
   }
 }

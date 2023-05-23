@@ -1,11 +1,7 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -18,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -31,8 +27,8 @@ try {
     if (requestconf_1.INPUT_CUSTOM_CONFIG_FILE) {
         core.info("Using custom axios config file");
         var basePath = process.env.GITHUB_WORKSPACE;
-        var path = "".concat(basePath, "/").concat(requestconf_1.INPUT_CUSTOM_CONFIG_FILE);
-        core.debug("Path is ".concat(path));
+        var path = basePath + "/" + requestconf_1.INPUT_CUSTOM_CONFIG_FILE;
+        core.debug("Path is " + path);
         if (requestconf_1.INPUT_CUSTOM_CONFIG_FILE.split(".").pop() !== "json") {
             throw new Error("Config must be json file");
         }
@@ -40,11 +36,11 @@ try {
             throw new Error("Config file not found, meybe you need to use action/checkout before this step or there is typo on file name");
         }
         var customConfig = JSON.parse(fs.readFileSync(path).toString());
-        (0, util_1.sendRequestWithRetry)(customConfig);
+        util_1.sendRequestWithRetry(customConfig);
     }
     else {
         core.info("Using config from action params");
-        (0, util_1.sendRequestWithRetry)(requestconf_1.default);
+        util_1.sendRequestWithRetry(requestconf_1.default);
     }
 }
 catch (err) {
