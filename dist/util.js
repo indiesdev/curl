@@ -109,7 +109,8 @@ exports.tryToParseJson = function (data) {
 };
 exports.sendRequestWithRetry = function (config) { return __awaiter(void 0, void 0, void 0, function () {
     var client;
-    return __generator(this, function (_a) {
+    var _a;
+    return __generator(this, function (_b) {
         client = axios_1.default.create();
         if (requestconf_1.INPUT_RETRIES) {
             if (isNaN(Number(requestconf_1.INPUT_RETRIES))) {
@@ -118,6 +119,7 @@ exports.sendRequestWithRetry = function (config) { return __awaiter(void 0, void
             client.defaults.raxConfig = {
                 instance: client,
                 retry: Number(requestconf_1.INPUT_RETRIES),
+                httpMethodsToRetry: [(_a = config.method) !== null && _a !== void 0 ? _a : ''],
                 onRetryAttempt: function (err) {
                     var cfg = rax.getConfig(err);
                     core.info("Retry attempt #" + (cfg === null || cfg === void 0 ? void 0 : cfg.currentRetryAttempt));
