@@ -58,6 +58,7 @@ export const sendRequestWithRetry = async (config: AxiosRequestConfig) => {
     client.defaults.raxConfig = {
       instance: client,
       retry: Number(INPUT_RETRIES),
+      httpMethodsToRetry: [config.method ?? ''],
       onRetryAttempt: (err) => {
         const cfg = rax.getConfig(err);
         core.info(`Retry attempt #${cfg?.currentRetryAttempt}`);
