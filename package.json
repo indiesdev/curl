@@ -24,7 +24,7 @@
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@types/js-yaml": "^4.0.5",
-    "axios": "^0.26.1",
+    "axios": "^1.6.0",
     "axios-retry": "^3.2.4",
     "fs": "0.0.1-security",
     "js-yaml": "^4.1.0",
